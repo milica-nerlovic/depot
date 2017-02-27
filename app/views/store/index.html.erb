@@ -2,7 +2,7 @@
 <p id="notice"><%= notice %></p>
 <% end %>
 
-<h1><%= t(.'title_html') %></h1>
+<h1><%= t('.title_html') %></h1>
 
 <p>Views: <%= @counter if @counter > 5 %></p>
 <% cache ['store', Product.latest] do %>
