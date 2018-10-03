@@ -1,63 +1,41 @@
+
 version: "v1.0"
-name: First pipeline example
-agent:
-  machine:
-    type: e1-standard-2
-    os_image: ubuntu1804
-
+name: My first pipeline
+semaphore_image: standard
 blocks:
-  - name: "Build"
-    task:
+  - name: "Stage 1"
+    build:
+      prologue:
+        commands:
+          - checkout
+      epilogue:
+        commands:
+          - echo "Yay job finished"
+          - echo $SEMAPHORE_JOB_RESULT
       env_vars:
-        - name: APP_ENV
-          value: prod
+        - name: VAR1
+          value: Environment Variable 1
+        - name: PI
+          value: "3.14159"
       jobs:
-      - name: Docker build
+      - name: Just ls
         commands:
-          - checkout
-          - ls -1
-          - echo $APP_ENV
-          - echo "Docker build..."
-          - echo "done"
+          - pwd
+          - echo "test"
+          - ls /etc
 
-  - name: "Smoke tests"
-    task:
+      - name: List files
+        commands:
+          - echo "First env var -> $VAR1"
+          - echo "My files:"
+          - ls -lah
+
+  - name: "Stage 2"
+    build:
       jobs:
-      - name: Smoke
+      - name: Echo job
         commands:
           - checkout
-          - echo "make smoke"
-
-  - name: "Unit tests"
-    task:
-      jobs:
-      - name: RSpec
-        commands:
-          - checkout
-          - echo "make rspec"
-
-      - name: Lint code
-        commands:
-          - checkout
-          - echo "make lint"
-
-      - name: Check security
-        commands:
-          - checkout
-          - echo "make security"
-
-  - name: "Integration tests"
-    task:
-      jobs:
-      - name: Cucumber
-        commands:
-          - checkout
-          - echo "make cucumber"
-
-  - name: "Push Image"
-    task:
-      jobs:
-      - name: Push
-        commands:
-          - checkout
-          - echo "make docker.push"
+          - pwd
+          - echo $SEMAPHORE_PIPELINE_ID
+          - echo "Hello from $SEMAPHORE_JOB_ID"
